@@ -33,7 +33,7 @@
 
 
 
-        <div ng-app="Pizzapp">
+        <div ng-app="ShutterSearch">
             <div ng-controller="MainCtrl">
                 
                 
@@ -72,10 +72,6 @@
         </md-select>
         </h2>
         <span flex></span>
-        <md-switch hide-sm class="md-primary" ng-model="gridView" aria-label="Switch 1">
-          Grid
-  </md-switch>
-      <span flex></span>
         <md-button class="md-fab md-primary md-mini" ng-click="search()">
       <i class="fa fa-search" ng-click="search()"></i>
   </md-button>
@@ -89,7 +85,7 @@
 
  <md-content>
  
-  <md-grid-list ng-if="gridView" class="marg2"
+  <md-grid-list class="marg2"
         md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="3"
          md-row-height="300px">
 
@@ -153,24 +149,6 @@
  
  
  
-      <md-list ng-if="!gridView" flex class="marg">
-      <md-list-item class="md-3-line" ng-repeat="item in res | orderBy:sortAttr" ng-click="getNumberOfImages(item)">
-        <div class="md-list-item-text" layout="column">
-        <h3><b>{{item.label}}</b></h3> 
-        <div style="display: table; width: 60%">
-          <p ng-class="['singleNumber', {'highligh': (sortAttr == 'total')}]" ng-if="item.total">{{item.total | number}} total</p>
-        <p ng-class="['singleNumber', {'highligh': (sortAttr == 'photos')}]" ng-if="item.photos">{{item.photos | number}} photos</p>
-        <p class="singleNumber" ng-class="['singleNumber', {'highligh': (sortAttr == 'illustrations')}]" ng-if="item.illustrations">{{item.illustrations | number}} illustrations</p>
-        </div>
-        
-        <p ng-class="['singleNumber', {'highligh': (sortAttr == 'vectors')}]" ng-if="item.vectors">{{item.vectors | number}} vectors</p>
-        </div>
-        <md-button ng-if="!item.loading" class="md-primary md-icon-button" ng-click="openShutterSearch(item)">
-            <i class="fa fa-search"></i>
-          </md-button>
-          <md-progress-circular ng-if="item.loading" md-mode="indeterminate"></md-progress-circular>
-        </md-list-item>
-      </md-list>
     </md-content>
 
     

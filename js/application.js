@@ -1,4 +1,4 @@
-var app = angular.module('Pizzapp', ['ngMaterial', 'ngMdIcons']).config(function($mdThemingProvider) {
+var app = angular.module('ShutterSearch', ['ngMaterial', 'ngMdIcons']).config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
     .primaryPalette('deep-purple')
     .accentPalette('orange')
@@ -7,8 +7,6 @@ var app = angular.module('Pizzapp', ['ngMaterial', 'ngMdIcons']).config(function
 
 app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout', function($scope, $interval, $http, $window, $timeout) {
  
-$scope.gridView = true;
-  
   
   var originatorEv;
 
