@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ShutterSearch</title>
+        
+        <meta name="viewport" content="width=device-width">
+        
+        <!-- Angular Material CSS now available via Google CDN; version 0.10 used here -->
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        
+        <link rel="stylesheet" href="css/style.css">
+        
+    </head>
+
+  <body>
+    
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.5.0/angular-material-icons.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+      
+      
+      
+    <script src="js/application.js"></script>
+
+
+
+        <div ng-app="Pizzapp">
+            <div ng-controller="MainCtrl">
+                
+                
+                
+                
+    
+   <md-toolbar class="md-warn" style="position: fixed;">
+      <div class="md-toolbar-tools">
+        
+        <md-menu>
+      <md-button class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+        <i class="fa fa-bars"></i>
+      </md-button>
+      <md-menu-content>
+        <md-menu-item ng-repeat="s in sortAttrs">
+          <md-button ng-click="ordina(s)">
+            Ordina per {{s}}
+          </md-button>
+        </md-menu-item>
+       
+        
+        
+      </md-menu-content>
+    </md-menu>
+        <span flex></span>
+        <h2 style="color: #FFF !important;">
+          <md-select ng-model="type" placeholder="SELEZIONA TIPOLOGIA" class="md-no-underline">
+          <md-option value="photo">Photo</md-option>
+          <md-option value="vector">Vector</md-option>
+        </md-select>
+        </h2>
+        <span flex></span>
+        <h2 style="color: #FFF !important;">
+          <md-select ng-model="lang" placeholder="SELEZIONA LINGUA" class="md-no-underline">
+          <md-option ng-repeat="l in languages" value="{{l.value}}">{{l.label}}</md-option>
+        </md-select>
+        </h2>
+        <span flex></span>
+        <md-switch class="md-primary" ng-model="gridView" aria-label="Switch 1">
+          Grid
+  </md-switch>
+      <span flex></span>
+        <md-button class="md-fab md-primary md-mini" ng-click="search()">
+      <i class="fa fa-search" ng-click="search()"></i>
+  </md-button>
+      </div>
+    </md-toolbar>
+    
+  
+  
+  
+
+
+ <md-content>
+ 
+  <md-grid-list ng-if="gridView" class="marg2"
+        md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="3"
+         md-row-height="300px">
+
+    <md-grid-tile ng-repeat="item in res | orderBy:sortAttr"
+        md-rowspan="1" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1">
+        
+        <md-card md-theme-watch style="width: 100%;">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{$index + 1}}. {{item.label}}</span>
+            <span ng-class="['md-subhead', {'highligh': (sortAttr == 'total')}]">{{item.total | number}} totals</span>
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-lg card-media hover07">
+              <div ng-if="!item.loading">
+              
+              <img style="width: 100%;" ng-src="{{item.previewUrl}}"/>
+              <div class="search-icon">
+                <md-button class="md-fab md-primary md-mini" style="margin: 0px !important;" ng-click="search()">
+                <i class="fa fa-search" ng-click="openShutterSearch(item)"></i>
+                </md-button>
+              </div>
+            
+              </div>
+              <div ng-if="item.loading">
+              <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+              </div>
+            </div>
+          </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-raised md-primary">
+          <md-tooltip md-direction="top">
+          PHOTOS
+        </md-tooltip>
+          <i ng-class="['fa fa-camera-retro', {'highligh-icon': (sortAttr == 'photos')}]"></i>
+          {{item.photos | number}}
+          </md-button>
+          <md-button class="md-raised md-warn">
+          <md-tooltip md-direction="top">
+          ILLUSTRATIONS
+        </md-tooltip>
+          <i ng-class="['fa fa-paint-brush', {'highligh-icon': (sortAttr == 'illustrations')}]"></i>
+          {{item.illustrations | number}}
+          </md-button>
+          <md-button class="md-raised md-accent">
+          <md-tooltip md-direction="top">
+          VECTORS
+        </md-tooltip>
+          <i ng-class="['fa fa-object-ungroup', {'highligh-icon': (sortAttr == 'vectors')}]"></i>
+          {{item.vectors | number}}</md-button>
+        </md-card-actions>
+      </md-card>
+      
+    </md-grid-tile>
+
+
+  </md-grid-list>
+ 
+ 
+ 
+ 
+ 
+      <md-list ng-if="!gridView" flex class="marg">
+      <md-list-item class="md-3-line" ng-repeat="item in res | orderBy:sortAttr" ng-click="getNumberOfImages(item)">
+        <div class="md-list-item-text" layout="column">
+        <h3><b>{{item.label}}</b></h3> 
+        <div style="display: table; width: 60%">
+          <p ng-class="['singleNumber', {'highligh': (sortAttr == 'total')}]" ng-if="item.total">{{item.total | number}} total</p>
+        <p ng-class="['singleNumber', {'highligh': (sortAttr == 'photos')}]" ng-if="item.photos">{{item.photos | number}} photos</p>
+        <p class="singleNumber" ng-class="['singleNumber', {'highligh': (sortAttr == 'illustrations')}]" ng-if="item.illustrations">{{item.illustrations | number}} illustrations</p>
+        </div>
+        
+        <p ng-class="['singleNumber', {'highligh': (sortAttr == 'vectors')}]" ng-if="item.vectors">{{item.vectors | number}} vectors</p>
+        </div>
+        <md-button ng-if="!item.loading" class="md-primary md-icon-button" ng-click="openShutterSearch(item)">
+            <i class="fa fa-search"></i>
+          </md-button>
+          <md-progress-circular ng-if="item.loading" md-mode="indeterminate"></md-progress-circular>
+        </md-list-item>
+      </md-list>
+    </md-content>
+
+    
+</div>
+</div>
+
+
+              
+                
+                
+                
+                
+            </div>
+        
+        </div>
+        
+        
+    </body>
+</html>
