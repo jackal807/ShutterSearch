@@ -1,17 +1,79 @@
-var app = angular.module('ShutterSearch', ['ngMaterial', 'ngMdIcons']).config(function($mdThemingProvider) {
+var app = angular.module('ShutterSearch', ['ngMaterial', 'ngMdIcons', 'ShutterSearchServices']).config(function($mdThemingProvider, $httpProvider) {
   $mdThemingProvider.theme('default')
     .primaryPalette('deep-purple')
     .accentPalette('orange')
     .warnPalette('blue');
+    
+     $httpProvider.interceptors.push('InterceptorSrvc');
 });
 
-app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout', function($scope, $interval, $http, $window, $timeout) {
+app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout', '$mdDialog', 'RestSrvc', function($scope, $interval, $http, $window, $timeout, $mdDialog, RestSrvc) {
  
-  
-  var originatorEv;
+  $scope.showAdvanced = function(ev, type, keyword) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'dialog1.tmpl.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose:true,
+      fullscreen: $scope.customFullscreen, // Only for -xs, -sm breakpoints.
+      locals: {
+        "preview": {
+            "type": type,
+            "keyword": keyword,
+            "lang": $scope.lang
+        }
+      }
+    })
+    .then(function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }, function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+  };
+    
+    function DialogController($scope, $mdDialog, RestSrvc, preview) {
+   
+    $scope.preview = preview;
+    $scope.previewLoading = true;
+    $scope.previewToolbarClass = {};
+    $scope.previewToolbarClass["photo"] = "md-primary";
+    $scope.previewToolbarClass["illustration"] = "md-warn";
+    $scope.previewToolbarClass["vector"] = "md-accent";
+        
+    $scope.getPreviewImages = function() {
+        var t = preview.type;
+        if(t == 'illustration') t = '';
+        var params = {
+            "query" : preview.keyword, 
+            "per_page": 9, 
+            "page": 1,
+            "language" : preview.lang,
+            "image_type" : t
+        }
+        RestSrvc.search(params).then(function(response) {
+            $scope.previewImages = response.data.data.map(function(e) {return e.assets.preview.url});
+            $scope.previewLoading = false;
+        });
+    }
+    
+    $scope.getPreviewImages();
+        
+    $scope.hide = function() {
+      $mdDialog.hide();
+    };
+
+    $scope.cancel = function() {
+      $mdDialog.cancel();
+    };
+
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };
+  }
+    
 
     $scope.openMenu = function($mdOpenMenu, ev) {
-      originatorEv = ev;
       $mdOpenMenu(ev);
     };
   
@@ -19,7 +81,6 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
   
   $scope.lang = 'it';
 
-	$scope.headers = {'Authorization': 'Basic ZTVjZTZkYjljNzE0ZjM3ZDA5OTM6ZTgyMWI2YTNkOTI1YzZjZThiM2QzZGE1MTk0ZGNjZGFiZGFjOTczZA=='}
 
    $scope.type = "vector";
    $scope.sortAttrs = ["total", "photos", "illustrations", "vectors"];
@@ -39,8 +100,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
     
     
   $scope.init= function() {
-    var searchUrl = "https://api.shutterstock.com/v2/images/search";
-    var config = {headers : $scope.headers};
+    var config = {};
     
     let promise = $timeout();
     angular.forEach($scope.res, function(value, key) {
@@ -67,22 +127,22 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
           }
         }
         
-        $http.get(searchUrl, config).then(function(r) {
+        RestSrvc.search(config).then(function(r) {
                       value["total"] = r.data.total_count;
                       console.log(r)
                       value["previewUrl"] = r.data.data[0].assets.preview.url;
                       
                       if(finishLoading(value)) value["loading"] = false;
     									});
-                      $http.get(searchUrl,configs[0]).then(function(r) {
+                      RestSrvc.search(configs[0]).then(function(r) {
                       value["photos"] = r.data.total_count;
                       if(finishLoading(value)) value["loading"] = false;
     									});
-                      $http.get(searchUrl, configs[1]).then(function(r) {
+                      RestSrvc.search(configs[1]).then(function(r) {
                       value["illustrations"] = r.data.total_count;
                       if(finishLoading(value)) value["loading"] = false;
     									});
-                      $http.get(searchUrl, configs[2]).then(function(r) {
+                      RestSrvc.search(configs[2]).then(function(r) {
                       value["vectors"] = r.data.total_count;
                       if(finishLoading(value)) value["loading"] = false;
     									});
@@ -112,7 +172,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
   
   
   
-  $http.get('https://api.shutterstock.com/v2/images/search/popular/queries', config).then(function(response) {
+  RestSrvc.popular(config).then(function(response) {
     	$scope.res = response.data.data.map(function(e){return {"label" : e}});
         $scope.init();
  })//fine funzione response

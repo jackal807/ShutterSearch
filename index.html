@@ -28,7 +28,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
       
       
-      
+    <script src="js/services.js"></script>
     <script src="js/application.js"></script>
 
 
@@ -117,21 +117,24 @@
           </md-card-title-media>
         </md-card-title>
         <md-card-actions layout="row" layout-align="end center">
-          <md-button class="md-raised md-primary">
+            
+            
+            
+          <md-button class="md-raised md-primary" ng-click="showAdvanced($event, 'photo', item.label)">
           <md-tooltip md-direction="top">
           PHOTOS
         </md-tooltip>
           <i ng-class="['fa fa-camera-retro', {'highligh-icon': (sortAttr == 'photos')}]"></i>
           {{item.photos | number}}
           </md-button>
-          <md-button class="md-raised md-warn">
+          <md-button class="md-raised md-warn" ng-click="showAdvanced($event, 'illustration', item.label)">
           <md-tooltip md-direction="top">
           ILLUSTRATIONS
         </md-tooltip>
           <i ng-class="['fa fa-paint-brush', {'highligh-icon': (sortAttr == 'illustrations')}]"></i>
           {{item.illustrations | number}}
           </md-button>
-          <md-button class="md-raised md-accent">
+          <md-button class="md-raised md-accent" ng-click="showAdvanced($event, 'vector', item.label)">
           <md-tooltip md-direction="top">
           VECTORS
         </md-tooltip>
@@ -153,18 +156,76 @@
 
     
 </div>
-</div>
+            
+            
+            
+            
+            
+            
+            
+            
+<script type="text/ng-template" id="dialog1.tmpl.html"><md-dialog>
+  <form ng-cloak>
+    <md-toolbar ng-class="previewToolbarClass[preview.type]">
+      <div class="md-toolbar-tools">
+        <h2>Preview of {{preview.type}}s with keyword "{{preview.keyword}}"</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <i class="fa fa-times"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
 
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        
+            
+          <md-grid-list ng-if="!previewLoading"
+        md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="3"
+        md-row-height-gt-md="1:1" md-row-height="150px">
 
-              
-                
-                
-                
-                
+    <md-grid-tile
+        md-rowspan="1" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1" ng-repeat="img in previewImages" ng-if="$index < 9">
+            <div class="md-media-lg card-media">
+              <img style="max-width: 100%;" ng-src="{{img}}"/>
             </div>
+      <md-grid-tile-footer>
         
-        </div>
-        
-        
+      </md-grid-tile-footer>
+    </md-grid-tile>
+              
+
+   
+
+  </md-grid-list>
+          <div ng-if="previewLoading" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+          
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      
+      <span flex></span>
+      <md-button ng-click="answer('not useful')">
+       Close
+      </md-button>
+      <md-button ng-click="answer('useful')">
+        More
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+</script>
+            
+            
+            
+            
+            
+            
+            
+            
+</div> 
     </body>
 </html>
