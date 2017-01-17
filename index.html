@@ -187,10 +187,10 @@
     <md-grid-tile
         md-rowspan="1" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1" ng-repeat="img in previewImages" ng-if="$index < 9">
             <div class="md-media-lg card-media">
-              <img style="max-width: 100%;" ng-src="{{img}}"/>
+              <img style="height:100px;" ng-src="{{img.url}}"/>
             </div>
       <md-grid-tile-footer>
-        
+        <h3>{{img.descr | shortener:12}}</h3>
       </md-grid-tile-footer>
     </md-grid-tile>
               

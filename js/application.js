@@ -36,23 +36,31 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
    
     $scope.preview = preview;
     $scope.previewLoading = true;
-    $scope.previewToolbarClass = {};
-    $scope.previewToolbarClass["photo"] = "md-primary";
-    $scope.previewToolbarClass["illustration"] = "md-warn";
-    $scope.previewToolbarClass["vector"] = "md-accent";
+        
+    $scope.previewToolbarClass = {
+        "photo" : "md-primary",
+        "illustration" : "md-warn",
+        "vector" : "md-accent"
+    };
+        
+    
         
     $scope.getPreviewImages = function() {
         var t = preview.type;
         if(t == 'illustration') t = '';
-        var params = {
-            "query" : preview.keyword, 
-            "per_page": 9, 
-            "page": 1,
-            "language" : preview.lang,
-            "image_type" : t
+        var config = {
+                "params" : {
+                    "query" : preview.keyword, 
+                    "per_page": 9, 
+                    "page": 1,
+                    "language" : preview.lang,
+                    "image_type" : t
+            }
         }
-        RestSrvc.search(params).then(function(response) {
-            $scope.previewImages = response.data.data.map(function(e) {return e.assets.preview.url});
+        RestSrvc.search(config).then(function(response) {
+            console.log(response)
+            $scope.previewImages = response.data.data.map(function(e) {
+                return {"url" : e.assets.small_thumb.url, "descr": e.description}});
             $scope.previewLoading = false;
         });
     }
@@ -183,4 +191,21 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
  };
           
 }]);
+
+
+app.filter('shortener', function () {
+    return function(text, length) {
+        if (!text) return "";
+        if (!length || length < 1) {
+            length = 100;
+        }
+        if (text.length <= length) return text;
+        text = text.substr(0, length);
+
+        var index = text.lastIndexOf(' ');
+        if (index >= 0) text = text.substr(0, index);
+        return text + ' ...';
+    }
+});
+
  
