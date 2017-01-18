@@ -30,19 +30,32 @@
   margin-top: 74px;
 }
 
-@media (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
-  .marg {
-    margin-top: 48px;
-  }
-  
-  .marg2 {
-    margin-top: 58px;
-  }
+.mainButton {
+    position: fixed; 
+    top: 35px; 
+    right: 35px;
 }
 
-.gray {
-  background-color: yellow;
+@media (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
+      .marg {
+        margin-top: 48px;
+      }
+
+      .marg2 {
+        margin-top: 58px;
+      }
+    
+    .mainButton {
+      top: 30px; 
+      right: 35px;  
+      height: 40px !important;
+      width: 40px !important;
+      line-height: 40px !important;
+    }
 }
+
+
+
 
 
 /* Blur */

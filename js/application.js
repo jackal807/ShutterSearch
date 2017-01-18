@@ -1,7 +1,12 @@
 var app = angular.module('ShutterSearch', ['ngMaterial', 'ngMdIcons', 'ShutterSearchServices']).config(function($mdThemingProvider, $httpProvider) {
   $mdThemingProvider.theme('default')
     .primaryPalette('deep-purple')
-    .accentPalette('orange')
+    .accentPalette('amber', {
+      'default': '900', // by default use shade 400 from the pink palette for primary intentions
+      'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
+      'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+      'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+    })
     .warnPalette('blue');
     
      $httpProvider.interceptors.push('InterceptorSrvc');
@@ -75,8 +80,8 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
       $mdDialog.cancel();
     };
 
-    $scope.answer = function(answer) {
-      $mdDialog.hide(answer);
+    $scope.more = function() {
+ 	  $window.open('https://www.shutterstock.com/search?search_source=base_landing_page&language=' + $scope.preview.lang + '&searchterm=' + $scope.preview.keyword +  '&image_type=' + $scope.preview.type, '_blank');
     };
   }
     

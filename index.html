@@ -72,7 +72,7 @@
         </md-select>
         </h2>
         <span flex></span>
-        <md-button class="md-fab md-primary md-mini" ng-click="search()">
+        <md-button class="md-fab md-primary mainButton" ng-click="search()">
       <i class="fa fa-search" ng-click="search()"></i>
   </md-button>
       </div>
@@ -182,14 +182,17 @@
             
           <md-grid-list ng-if="!previewLoading"
         md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="3"
-        md-row-height-gt-md="1:1" md-row-height="150px">
+        md-row-height-gt-md="1:1" md-row-height="100px">
 
     <md-grid-tile
         md-rowspan="1" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1" ng-repeat="img in previewImages" ng-if="$index < 9">
             <div class="md-media-lg card-media">
-              <img style="height:100px;" ng-src="{{img.url}}"/>
+              <img ng-src="{{img.url}}"/>
             </div>
       <md-grid-tile-footer>
+        <md-tooltip md-delay="700">
+              {{img.descr}}
+        </md-tooltip>
         <h3>{{img.descr | shortener:12}}</h3>
       </md-grid-tile-footer>
     </md-grid-tile>
@@ -208,10 +211,10 @@
     <md-dialog-actions layout="row">
       
       <span flex></span>
-      <md-button ng-click="answer('not useful')">
+      <md-button ng-click="cancel()">
        Close
       </md-button>
-      <md-button ng-click="answer('useful')">
+      <md-button ng-class="['md-raised',previewToolbarClass[preview.type]]" ng-click="more()">
         More
       </md-button>
     </md-dialog-actions>
