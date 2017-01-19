@@ -147,7 +147,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
                         });
                       RestSrvc.search(configs[0]).then(function(r) {
                       value["photos"] = r.data.total_count;
-                      if($scope.type == 'photos') value["previewUrl"] = r.data.data[0].assets.preview.url;
+                      if($scope.type == 'photo') value["previewUrl"] = r.data.data[0].assets.preview.url;
                       if(finishLoading(value)) value["loading"] = false;
     									});
                       RestSrvc.search(configs[1]).then(function(r) {
