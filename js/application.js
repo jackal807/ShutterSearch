@@ -89,11 +89,10 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
     $scope.openMenu = function($mdOpenMenu, ev) {
       $mdOpenMenu(ev);
     };
+    
+    $scope.languages = RestSrvc.languages();
+    $scope.lang = 'it';
   
-  $scope.languages = [{"label" : "Cecoslovacco", "value" : "cs"}, {"label" : "Danese", "value" : "da"}, {"label" : "Tedesco", "value" : "de"}, {"label" : "Inglese", "value" : "en"}, {"label" : "Spagnolo", "value" : "es"}, {"label" : "Finlandese", "value" : "fi"}, {"label" : "Francese", "value" : "fr"}, {"label" : "Ungherese", "value" : "hu"}, {"label" : "Italiano", "value" : "it"}, {"label" : "Giapponese", "value" : "ja"}, {"label" : "Coreano", "value" : "ko"}, {"label" : "Norvegese", "value" : "nb"}, {"label" : "Olandese", "value" : "nl"}, {"label" : "Polacco", "value" : "pl"}, {"label" : "Portoghese", "value" : "pt"}, {"label" : "Russo", "value" : "ru"}, {"label" : "Svedese", "value" : "sv"}, {"label" : "Tailandese", "value" : "th"}, {"label" : "Turco", "value" : "tr"}, {"label" : "Cinese", "value" : "zh"},];
-  
-  $scope.lang = 'it';
-
 
    $scope.type = "vector";
    $scope.sortAttrs = ["total", "photos", "illustrations", "vectors"];
@@ -102,8 +101,11 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
     
     
    var finishLoading = function(item) {
-  	if(item.photos && item.vectors && item.illustrations && item.total) return true;
-    else return false;
+    if(!item["attempts"]) item["attempts"] = 1;
+    else item["attempts"]++;
+  	if(item.photos && item.vectors && item.illustrations && item.total) return 1;
+    else if(!((item.photos && item.vectors && item.illustrations && item.total)) && item["attempts"] == 4) return 2;
+    else return 0;
   }
    
    
@@ -143,21 +145,21 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
         RestSrvc.search(config).then(function(r) {
                       value["total"] = r.data.total_count;
                       
-                      if(finishLoading(value)) value["loading"] = false;
+                      if(finishLoading(value)==1 || finishLoading(value)==2) value["loading"] = false;
                         });
                       RestSrvc.search(configs[0]).then(function(r) {
                       value["photos"] = r.data.total_count;
                       if($scope.type == 'photo') value["previewUrl"] = r.data.data[0].assets.preview.url;
-                      if(finishLoading(value)) value["loading"] = false;
+                      if(finishLoading(value)==1 || finishLoading(value)==2) value["loading"] = false;
     									});
                       RestSrvc.search(configs[1]).then(function(r) {
                       value["illustrations"] = r.data.total_count;
-                      if(finishLoading(value)) value["loading"] = false;
+                      if(finishLoading(value)==1 || finishLoading(value)==2) value["loading"] = false;
     									});
                       RestSrvc.search(configs[2]).then(function(r) {
                       value["vectors"] = r.data.total_count;
                       if($scope.type == 'vector') value["previewUrl"] = r.data.data[0].assets.preview.url;
-                      if(finishLoading(value)) value["loading"] = false;
+                      if(finishLoading(value)==1 || finishLoading(value)==2) value["loading"] = false;
     									});
       
         return $timeout(300);

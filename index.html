@@ -68,7 +68,7 @@
         <span flex></span>
         <h2 style="color: #FFF !important;">
           <md-select ng-model="lang" placeholder="SELECT LANGUAGE" class="md-no-underline">
-          <md-option ng-repeat="l in languages" value="{{l.value}}">{{l.label}}</md-option>
+          <md-option ng-repeat="l in languages | orderBy: 'label'" value="{{l.value}}">{{l.label}}</md-option>
         </md-select>
         </h2>
         <span flex></span>
