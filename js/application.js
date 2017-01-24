@@ -1,18 +1,27 @@
 var app = angular.module('ShutterSearch', ['ngMaterial', 'ngMdIcons', 'ShutterSearchServices']).config(function($mdThemingProvider, $httpProvider) {
   $mdThemingProvider.theme('default')
     .primaryPalette('deep-purple')
-    .accentPalette('amber', {
-      'default': '900', // by default use shade 400 from the pink palette for primary intentions
-      'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
-      'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
-      'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+    .accentPalette('amber', {'default': '900','hue-1': '100','hue-2': '600','hue-3': 'A100' 
     })
     .warnPalette('blue');
+    
+    $mdThemingProvider.theme('altTheme')
+    .primaryPalette('blue', {'default': '200','hue-1': '100','hue-2': '600','hue-3': 'A100'});
     
      $httpProvider.interceptors.push('InterceptorSrvc');
 });
 
 app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout', '$mdDialog', 'RestSrvc', function($scope, $interval, $http, $window, $timeout, $mdDialog, RestSrvc) {
+     
+  $scope.querySearch = function(query) {
+      var results = query ? $scope.languages.filter(function(e) { 
+          if(angular.lowercase(e.label).indexOf(angular.lowercase(query)) === 0) return e.label;
+      }) : $scope.languages;
+      return results;
+  }
+  
+  
+    
  
   $scope.showAdvanced = function(ev, type, keyword) {
     $mdDialog.show({
@@ -26,7 +35,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
         "preview": {
             "type": type,
             "keyword": keyword,
-            "lang": $scope.lang
+            "lang": $scope.lang.value
         }
       }
     })
@@ -91,7 +100,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
     };
     
     $scope.languages = RestSrvc.languages();
-    $scope.lang = 'it';
+    $scope.lang = $scope.languages[8];
   
 
    $scope.type = "vector";
@@ -123,7 +132,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
       promise = promise.then(function() {
          
     
-      config.params = {"query" : value.label, "per_page": 1, "language" : $scope.lang};
+      config.params = {"query" : value.label, "per_page": 1, "language" : $scope.lang.value};
       
       
       var configs = [];
@@ -176,7 +185,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
     
    $scope.search = function() {
    $scope.res = [];
-   var data = { "image_type" : $scope.type, "language" : $scope.lang };
+   var data = { "image_type" : $scope.type, "language" : $scope.lang.value };
 
   var config = {
    params: data,
@@ -194,7 +203,7 @@ app.controller('MainCtrl', ['$scope', '$interval', '$http', '$window', '$timeout
  } //fine funzione search
  
  $scope.openShutterSearch = function(item) {
- 	$window.open('https://www.shutterstock.com/search?search_source=base_landing_page&language=' + $scope.lang + '&searchterm=' + item.label + '&image_type=' + $scope.type, '_blank');
+ 	$window.open('https://www.shutterstock.com/search?search_source=base_landing_page&language=' + $scope.lang.value + '&searchterm=' + item.label + '&image_type=' + $scope.type, '_blank');
  };
           
 }]);

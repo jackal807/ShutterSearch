@@ -10,6 +10,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.8.0/css/flag-icon.css">
+        
         
         <link rel="stylesheet" href="css/style.css">
         
@@ -58,25 +60,55 @@
         
       </md-menu-content>
     </md-menu>
-        <span flex></span>
-        <h2 style="color: #FFF !important;">
-          <md-select ng-model="type" placeholder="SELECT TYPE" class="md-no-underline">
-          <md-option value="photo">Photo</md-option>
-          <md-option value="vector">Vector</md-option>
-        </md-select>
+          
+        <h2>
+          <span>ShutterSearch</span>
         </h2>
+         
         <span flex></span>
         <h2 style="color: #FFF !important;">
+
+           <!-- 
           <md-select ng-model="lang" placeholder="SELECT LANGUAGE" class="md-no-underline">
           <md-option ng-repeat="l in languages | orderBy: 'label'" value="{{l.value}}">{{l.label}}</md-option>
         </md-select>
+-->
         </h2>
-        <span flex></span>
-        <md-button class="md-raised md-primary" ng-class="['md-raised', { 'md-primary' : (type=='photo')}, { 'md-accent' : (type=='vector')}]" style="min-width: 40px !important;" ng-click="search()">
-      <i class="fa fa-search" ng-click="search()"></i>
-  </md-button>
+        
       </div>
     </md-toolbar>
+                
+ <md-content layout-gt-sm="row" layout-padding style="background-color: #E8EAF6">
+    <div layout="row" layout-fill>
+        <md-autocomplete flex="60" required
+          md-selected-item="lang"
+          md-no-cache="true"
+          md-search-text="searchText"
+          md-items="l in querySearch(searchText) | orderBy: 'label'"
+          md-item-text="l.label"
+          md-min-length="0"
+          md-floating-label="language">    
+            <md-item-template>
+              <span style="margin-right: 10px;"><i class="flag-icon flag-icon-{{l.flag}}"></i></span>
+              <span md-highlight-text="searchText" md-highlight-flags="^i">{{l.label}}</span>
+            </md-item-template>
+          </md-autocomplete>
+        
+       <md-input-container flex="30">
+          <label>image type</label>
+          <md-select ng-model="type">
+              <md-option value="photo">Photo</md-option>
+              <md-option value="vector">Vector</md-option>
+          </md-select>
+        </md-input-container>
+        <span flex="10"></span>
+        <md-button class="md-raised md-primary" ng-class="['md-raised', 'md-fab', 'md-mini', { 'md-primary' : (type=='photo')}, { 'md-accent' : (type=='vector')}]" style="min-width: 40px !important;" ng-click="search()">
+      <i class="fa fa-search" ng-click="search()"></i>
+  </md-button>
+    </div>
+  </md-content>
+                
+    
     
   
   
